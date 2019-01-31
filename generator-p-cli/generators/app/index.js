@@ -1,7 +1,10 @@
-'use strict';
+
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+const fs = require('fs');
+const _ = require('lodash');
+const path = require('path');
 
 module.exports = class extends Generator {
   prompting() {
@@ -12,11 +15,33 @@ module.exports = class extends Generator {
 
     const prompts = [
       {
-        type: 'confirm',
-        name: 'someAnswer',
-        message: 'Would you like to enable this option?',
-        default: true
-      }
+        type: 'list',
+        name: 'template',
+        message: 'choose your template',
+        choices: [
+          'react-ts',
+          'vue',
+        ],
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: 'your project name', 
+        default: this.appname,
+      },
+      {
+        type: 'input',
+        name: 'description',
+        required: false,
+        message: 'project description', 
+        default: 'a new project',
+      },
+      {
+        type: 'input',
+        name: 'author',
+        message: 'author', 
+        default: this.user.git.name(),
+      },
     ];
 
     return this.prompt(prompts).then(props => {
@@ -26,12 +51,12 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    this.fs.copy(
-      this.templatePath('dummyfile.txt'),
-      this.destinationPath('dummyfile.txt')
-    );
+    this.fs.copyTpl(
+      this.templatePath(`./${this.props.template}`),
+      this.destinationPath(`./${this.props.name}`), 
+      this.props,
+    )
   }
-
   install() {
     this.installDependencies();
   }
