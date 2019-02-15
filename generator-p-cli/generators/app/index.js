@@ -20,6 +20,7 @@ module.exports = class extends Generator {
         message: 'choose your template',
         choices: [
           'react-ts',
+          'react-dva',
           'vue',
         ],
       },
